@@ -23,8 +23,11 @@ def extract_tags(email):
 
 
 def get_tag_contents(tag_regex, tagged_full):
-    tag_iter = re.compile(tag_regex).findall(tagged_full)
-    content_freq = Counter(tag_iter)
+    content = re.compile(tag_regex).findall(tagged_full)
+    detagged = []
+    for text in content:
+        detagged.append(detag(text))
+    content_freq = Counter(detagged)
     return content_freq
 
 
@@ -51,7 +54,7 @@ def calculate_f():
         tp_classified["all"] = tp_classified["all"] + tp_classified[tag]
         print()
 
-        if classified[tag] == 0 or tp_in_corpus[tag] == 0:
+        if classified[tag] == 0 or tp_in_corpus[tag] == 0 or tp_classified[tag] == 0:
             print("no tags found, can't compute F1 for " + tag)
         else:
             print(tag)
@@ -89,6 +92,8 @@ myPath = 'data/email/test/'
 onlyFiles = [f for f in listdir(myPath+'untagged/') if isfile(join(myPath+'untagged/', f))]
 for email in onlyFiles:
     extract_tags(email)
+
+#extract_tags('301.txt')
 
 print(classified)
 print(tp_in_corpus)

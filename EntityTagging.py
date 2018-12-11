@@ -3,12 +3,6 @@ from os import listdir
 from os.path import isfile, join
 
 
-def tag_para(full_email):
-    para_exp = r"(^|\n)[A-Z].+(\n.+)+?[.:!?](\n|$)"
-    para_iter = re.compile(para_exp).finditer(full_email)
-    # TODO paragraph
-
-
 def tag_times(full_email):
 
     stime = None
@@ -47,23 +41,23 @@ def get_times(text):
     time_iter = re.compile(time_exp).finditer(text)
 
     times = {}
-    for timeObj in enumerate(time_iter):
+    for time_obj in enumerate(time_iter):
 
         valid = True
-        time = int(timeObj[1].group('hrs')) * 100
+        time = int(time_obj[1].group('hrs')) * 100
 
-        if (timeObj[1].group('ap0') is not None and timeObj[1].group('ap0').lower() == 'p') \
-                or (timeObj[1].group('ap1') is not None and timeObj[1].group('ap1').lower() == 'p'):
+        if (time_obj[1].group('ap0') is not None and time_obj[1].group('ap0').lower() == 'p') \
+                or (time_obj[1].group('ap1') is not None and time_obj[1].group('ap1').lower() == 'p'):
             time = time + 1200
 
         if time > 2400:
             valid = False
 
         mins = 0
-        if timeObj[1].group('min0') is not None:
-            mins = int(timeObj[1].group('min0'))
-        if timeObj[1].group('min1') is not None:
-            mins = int(timeObj[1].group('min1'))
+        if time_obj[1].group('min0') is not None:
+            mins = int(time_obj[1].group('min0'))
+        if time_obj[1].group('min1') is not None:
+            mins = int(time_obj[1].group('min1'))
 
         if mins > 59 or mins < 0:
             valid = False
@@ -71,9 +65,26 @@ def get_times(text):
 
         if valid:
             times.setdefault(time, set())
-            times[time].add(timeObj[1][0])
+            times[time].add(time_obj[1][0])
 
     return times
+
+
+def tag_para(full_email):
+    para_exp = r"(?m)(?:^)\s?([A-Z0-9<(].+?(?:\n.+?)*?[.:!?>)])(?:$)"
+    if "Abstract:" in full_email:
+        para_all = re.compile(para_exp).findall(full_email.split("Abstract:")[1])
+    else:
+        para_all = re.compile(para_exp).findall(full_email)
+
+    print(para_all)
+
+    for paragraph in para_all:
+        full_email = tag_element(full_email, paragraph, "paragraph")
+
+    return full_email
+    # TODO paragraph
+
 
 
 def tag_element(text, element, tag):
@@ -89,8 +100,8 @@ def tag_email(cur_email):
 
     full_email = tag_times(full_email)
 
-    # head = full_email.split('Abstract:')[0]
-    # body = full_email.split('Abstract:')[1]
+    full_email = tag_para(full_email)
+
     # TODO sentence
     # nltk.senttokenizer
 
@@ -106,7 +117,7 @@ def tag_email(cur_email):
     return full_email
 
 
-myPath = 'data/email/training/'
+myPath = 'data/email/test/'
 onlyFiles = [f for f in listdir(myPath+'untagged/') if isfile(join(myPath+'untagged/', f))]
 for email in onlyFiles:
     tag_email(email)
