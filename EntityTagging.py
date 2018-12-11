@@ -85,7 +85,7 @@ def tag_element(text, element, tag):
 def tag_email(cur_email):
 
     print(cur_email)
-    full_email = open(myPath + str(cur_email)).read()
+    full_email = open(myPath + 'untagged/' + str(cur_email)).read()
 
     full_email = tag_times(full_email)
 
@@ -101,13 +101,13 @@ def tag_email(cur_email):
     # TODO PoS
     # TODO Named Entity Recognition
 
-    with open(myPath + str(cur_email), 'w') as file:
+    with open(myPath + 'tagged/' + str(cur_email), 'w') as file:
         file.write(full_email)
+    return full_email
 
 
-myPath = 'data/email/untagged/'
-onlyFiles = [f for f in listdir(myPath) if isfile(join(myPath, f))]
-print(onlyFiles)
+myPath = 'data/email/training/'
+onlyFiles = [f for f in listdir(myPath+'untagged/') if isfile(join(myPath+'untagged/', f))]
 for email in onlyFiles:
     tag_email(email)
 
