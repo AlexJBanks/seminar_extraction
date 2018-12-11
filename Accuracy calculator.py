@@ -15,6 +15,9 @@ def extract_tags(email):
         classified[tag] = classified[tag] + sum(tagged_freq.values())
         tp_in_corpus[tag] = tp_in_corpus[tag] + sum(pretagged_freq.values())
 
+        #print(tagged_freq)
+        #print(pretagged_freq)
+
         temp = 0
         for content in pretagged_freq:
             temp = temp + min(tagged_freq[content], pretagged_freq[content])

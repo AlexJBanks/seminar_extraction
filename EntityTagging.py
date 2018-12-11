@@ -2,6 +2,8 @@ import re
 from os import listdir
 from os.path import isfile, join
 
+import nltk
+
 
 def tag_times(full_email):
 
@@ -70,20 +72,24 @@ def get_times(text):
     return times
 
 
-def tag_para(full_email):
-    para_exp = r"(?m)(?:^)\s?([A-Z0-9<(].+?(?:\n.+?)*?[.:!?>)])(?:$)"
+def tag_para_sent(full_email):
+    para_exp = r"(?m)(?:^)\s?([A-Z0-9<(].+?(?:\n.+?)*?[.!?>)])(?:$)"
     if "Abstract:" in full_email:
         para_all = re.compile(para_exp).findall(full_email.split("Abstract:")[1])
     else:
         para_all = re.compile(para_exp).findall(full_email)
 
-    print(para_all)
-
+    list_of_sents = []
     for paragraph in para_all:
         full_email = tag_element(full_email, paragraph, "paragraph")
+        for sent in nltk.sent_tokenize(paragraph):
+            list_of_sents.append(sent)
+
+    for sent in list_of_sents:
+        full_email = tag_element(full_email, sent.strip()[:-1], "sentence")
+    #TODO improve sent
 
     return full_email
-    # TODO paragraph
 
 
 
@@ -100,10 +106,7 @@ def tag_email(cur_email):
 
     full_email = tag_times(full_email)
 
-    full_email = tag_para(full_email)
-
-    # TODO sentence
-    # nltk.senttokenizer
+    full_email = tag_para_sent(full_email)
 
     # TODO speaker
     # TODO location
@@ -122,5 +125,6 @@ onlyFiles = [f for f in listdir(myPath+'untagged/') if isfile(join(myPath+'untag
 for email in onlyFiles:
     tag_email(email)
 
+#tag_email('301.txt')
 # https://canvas.bham.ac.uk/courses/31164/pages/first-steps-in-the-assignment
 # https://canvas.bham.ac.uk/courses/31164/pages/more-tips-for-the-assignment
