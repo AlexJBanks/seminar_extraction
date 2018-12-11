@@ -1,31 +1,34 @@
 import re
+from os import listdir
+from os.path import isfile, join
+
 
 def tag_para(full_email):
-    paraExp = r"(^|\n)[A-Z].+(\n.+)+?[.:!?](\n|$)"     #
-    paraIter = re.compile(paraExp).finditer(full_email) #
+    para_exp = r"(^|\n)[A-Z].+(\n.+)+?[.:!?](\n|$)"
+    para_iter = re.compile(para_exp).finditer(full_email)
+    # TODO paragraph
+
 
 def tag_times(full_email):
 
-    stime=None
-    etime=None
+    stime = None
+    etime = None
     if "Time:" in full_email:
         headtimes = get_times(full_email.split("Time:")[1].split("\n")[0])
         if len(headtimes) > 0:
             stime = min(headtimes)
             if len(headtimes) > 1:
                 etime = max(headtimes)
-    print(str(stime) + " " + str(etime))
 
-    if etime is None:
+    if etime is None and "Abstract:" in full_email:
         bodytimes = get_times(full_email.split("Abstract:")[1])
         if stime is None and len(bodytimes) > 0:
             stime = min(bodytimes)
         if len(bodytimes) > 0 and max(bodytimes) != stime:
             etime = max(bodytimes)
-    print(str(stime) + " " + str(etime))
 
     if stime is None:
-        full_email
+        return full_email
 
     alltimes = get_times(full_email)
 
@@ -36,6 +39,7 @@ def tag_times(full_email):
             full_email = tag_element(full_email, time, "etime")
 
     return full_email
+
 
 def get_times(text):
 
@@ -52,7 +56,8 @@ def get_times(text):
                 or (timeObj[1].group('ap1') is not None and timeObj[1].group('ap1').lower() == 'p'):
             time = time + 1200
 
-        if time > 2400: valid = False
+        if time > 2400:
+            valid = False
 
         mins = 0
         if timeObj[1].group('min0') is not None:
@@ -60,7 +65,8 @@ def get_times(text):
         if timeObj[1].group('min1') is not None:
             mins = int(timeObj[1].group('min1'))
 
-        if mins > 59 or mins < 0: valid = False
+        if mins > 59 or mins < 0:
+            valid = False
         time = time + mins
 
         if valid:
@@ -69,20 +75,22 @@ def get_times(text):
 
     return times
 
+
 def tag_element(text, element, tag):
     element = element.strip()
     tag = tag.strip()
     return text.replace(element, "<" + tag + ">" + element + "</" + tag + ">")
 
+
 def tag_email(cur_email):
 
-    fullEmail = open('data/email/untagged/' + str(cur_email) + '.txt').read()
+    print(cur_email)
+    full_email = open(myPath + str(cur_email)).read()
 
-    fullEmail = tag_times(fullEmail)
-    # TODO paragraph
+    full_email = tag_times(full_email)
 
-    # head = fullEmail.split('Abstract:')[0]
-    # body = fullEmail.split('Abstract:')[1]
+    # head = full_email.split('Abstract:')[0]
+    # body = full_email.split('Abstract:')[1]
     # TODO sentence
     # nltk.senttokenizer
 
@@ -93,10 +101,15 @@ def tag_email(cur_email):
     # TODO PoS
     # TODO Named Entity Recognition
 
-    print(fullEmail)
-    with open('data/email/tagged/' + str(cur_email) + '.txt', 'w') as file:
-        file.write(fullEmail)
+    with open(myPath + str(cur_email), 'w') as file:
+        file.write(full_email)
 
-tag_email(303)
+
+myPath = 'data/email/untagged/'
+onlyFiles = [f for f in listdir(myPath) if isfile(join(myPath, f))]
+print(onlyFiles)
+for email in onlyFiles:
+    tag_email(email)
+
 # https://canvas.bham.ac.uk/courses/31164/pages/first-steps-in-the-assignment
 # https://canvas.bham.ac.uk/courses/31164/pages/more-tips-for-the-assignment
