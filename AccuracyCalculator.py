@@ -3,6 +3,8 @@ from collections import Counter
 from os import listdir
 from os.path import isfile, join
 
+import EntityTagging
+
 def extract_tags(email):
     tagged_full    = open(myPath +    'tagged/' + str(email)).read()
     pretagged_full = open(myPath + 'pretagged/' + str(email)).read()
@@ -29,7 +31,7 @@ def get_tag_contents(tag_regex, tagged_full):
     content = re.compile(tag_regex).findall(tagged_full)
     detagged = []
     for text in content:
-        detagged.append(detag(text))
+        detagged.append(detag(text).strip())
     content_freq = Counter(detagged)
     return content_freq
 
@@ -96,7 +98,7 @@ onlyFiles = [f for f in listdir(myPath+'untagged/') if isfile(join(myPath+'untag
 for email in onlyFiles:
     extract_tags(email)
 
-#extract_tags('301.txt')
+#extract_tags('303.txt')
 
 print(classified)
 print(tp_in_corpus)

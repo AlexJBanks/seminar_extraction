@@ -73,7 +73,7 @@ def get_times(text):
 
 
 def tag_para_sent(full_email):
-    para_exp = r"(?m)(?:^)\s?([A-Z0-9<(].+?(?:\n.+?)*?[.!?>)])(?:$)"
+    para_exp = r"(?m)(?:^)\s+?([A-Z0-9].+?(?:\n.+?)*?[.!?])\s+?(?:$)"
     if "Abstract:" in full_email:
         para_all = re.compile(para_exp).findall(full_email.split("Abstract:")[1])
     else:
@@ -92,6 +92,20 @@ def tag_para_sent(full_email):
     return full_email
 
 
+def tag_loc(full_email):
+    raw_loc = open('data/locations.txt').read()
+    all_loc = raw_loc.split('\n')
+    if 'Place:' in full_email:
+        loc = full_email.split('Place:')[1].split('\n')[0].strip()
+        full_email = tag_element(full_email, loc, 'location')
+        return full_email
+
+    for loc in all_loc:
+        if loc in full_email:
+            full_email = tag_element(full_email, loc, 'location')
+            return full_email
+    return full_email
+
 
 def tag_element(text, element, tag):
     element = element.strip()
@@ -104,16 +118,12 @@ def tag_email(cur_email):
     print(cur_email)
     full_email = open(myPath + 'untagged/' + str(cur_email)).read()
 
-    full_email = tag_times(full_email)
-
     full_email = tag_para_sent(full_email)
 
-    # TODO speaker
-    # TODO location
+    full_email = tag_times(full_email)
 
-    # TODO Tokenisation
-    # TODO PoS
-    # TODO Named Entity Recognition
+    full_email = tag_loc(full_email)
+    # TODO speaker
 
     with open(myPath + 'tagged/' + str(cur_email), 'w') as file:
         file.write(full_email)
@@ -122,9 +132,8 @@ def tag_email(cur_email):
 
 myPath = 'data/email/test/'
 onlyFiles = [f for f in listdir(myPath+'untagged/') if isfile(join(myPath+'untagged/', f))]
+
 for email in onlyFiles:
     tag_email(email)
 
-#tag_email('301.txt')
-# https://canvas.bham.ac.uk/courses/31164/pages/first-steps-in-the-assignment
-# https://canvas.bham.ac.uk/courses/31164/pages/more-tips-for-the-assignment
+#tag_email('303.txt')
