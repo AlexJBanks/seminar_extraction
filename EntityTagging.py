@@ -111,7 +111,7 @@ def tag_loc(full_email):
 def tag_speak(full_email):
     speak = None
 
-    speak_exp = r'--+\s*?(\w.+?)\n'
+    speak_exp = r'--+\s*?(\w+(?:.? \w+)*.?)\n'
     speak_all = re.compile(speak_exp).findall(full_email)
     if len(speak_all) > 0:
         for name in speak_all:
