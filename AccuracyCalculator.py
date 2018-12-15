@@ -98,7 +98,7 @@ onlyFiles = [f for f in listdir(myPath+'untagged/') if isfile(join(myPath+'untag
 for email in onlyFiles:
     extract_tags(email)
 
-#extract_tags('303.txt')
+#extract_tags('306.txt')
 
 print(classified)
 print(tp_in_corpus)
