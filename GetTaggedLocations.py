@@ -13,19 +13,12 @@ def get_loc(email, path):
     return detagged
 
 
-testPath = 'data/email/test/pretagged'
 trainPath = 'data/email/training/pretagged'
-testFiles  = [f for f in listdir(testPath ) if isfile(join(testPath , f))]
 trainFiles = [f for f in listdir(trainPath) if isfile(join(trainPath, f))]
 
 loc_regex = AccuracyCalculator.get_tag_regex('location')
 
 locations = set()
-
-for email in testFiles:
-    for loc in get_loc(email, testPath):
-        locations.add(loc)
-
 for email in trainFiles:
     for loc in get_loc(email, trainPath):
         locations.add(loc)
@@ -39,5 +32,3 @@ for loc in locations:
 
 with open('data/locations.txt', 'w') as loc_file:
     loc_file.write(file_content[:-1])
-
-# for locations
