@@ -74,20 +74,16 @@ def get_times(text):
 
 def tag_para_sent(full_email):
     para_exp = r"(?m)(?:^)\s+?([A-Z0-9].+?(?:\n.+?)*?[.!?])\s+?(?:$)"
-    if "Abstract:" in full_email:
-        para_all = re.compile(para_exp).findall(full_email.split("Abstract:")[1])
-    else:
-        para_all = re.compile(para_exp).findall(full_email)
-
     list_of_sents = []
-    for paragraph in para_all:
-        full_email = tag_element(full_email, paragraph, "paragraph")
-        for sent in nltk.sent_tokenize(paragraph):
+    if "Abstract:" in full_email:
+        for sent in nltk.sent_tokenize(full_email.split("Abstract:")[1]):
             list_of_sents.append(sent)
 
-    for sent in list_of_sents:
-        full_email = tag_element(full_email, sent.strip()[:-1], "sentence")
-    #TODO improve sent
+        for paragraph in re.compile(para_exp).findall(full_email.split("Abstract:")[1]):
+            full_email = tag_element(full_email, paragraph, "paragraph")
+
+        for sent in list_of_sents:
+            full_email = tag_element(full_email, sent.strip()[:-1], "sentence")
 
     return full_email
 
@@ -136,7 +132,6 @@ def tag_element(text, element, tag):
 
 def tag_email(cur_email):
 
-    print(cur_email)
     full_email = open(myPath + 'untagged/' + str(cur_email)).read()
 
     full_email = tag_para_sent(full_email)
@@ -157,6 +152,7 @@ myPath = 'data/email/test/'
 onlyFiles = [f for f in listdir(myPath+'untagged/') if isfile(join(myPath+'untagged/', f))]
 
 for email in onlyFiles:
+    print(email)
     tag_email(email)
 
 tag_email('364.txt')
