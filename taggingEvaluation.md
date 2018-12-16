@@ -10,53 +10,6 @@ I messed around with the order the tags were applied too, finding that the large
 
 ## Tags
 
-### Start / End times
-#### Technique
-As both Start and End times have similar formats, I capture these at the same time.
-This also avoids me accidentally tagging the same time as both `stime` and `etime`.
-The easiest way to capture all times throughout the document was RegEx:
-```regexp
-(?i)(?P<hrs>\d{1,2})(?::(?P<min0>\d{2}) ?(?P<ap0>[ap]).?m|:(?P<min1>\d{2})| ?(?P<ap1>[ap]).?m)
-```
-Ignoring case, the regex looks for 1 or 2 digits, followed by either:
-- a colon, then 2 digits
-- am or pm (with or without a space, with or without dots)
-- or both *but not neither*
-
-For this particular RegEx, I made great use of Named Capture Groups as this improves readability of my code.
-
-Once all possible times are captured, they are parsed to an integer
-(e.g. `3pm -> 1500` `13:45 -> 1345`),
-the times validated (e.g. `3672` is not valid) and a dictionary of sets is generated
-where the the key is the int and the set is all strings in each email represented by the int.
-This allows me to pick one `stime`/`etime` and tag all strings that fit those times.
-
-Picking the times is pretty easy, I just select the smallest time as `stime` and largest times as `etime`,
-with integers making the comparison easy, ensuring they aren't equivalent.
-In order to improve accuracy, I change the scope that this analysis is performed over.
-1. Just the `Time:` line in the head (if it exists)
-2. Just the abstract and body
-
-If `stime` or `etime` haven't been allocated by this point then they aren't tagged. 
-This is to avoid *False Positives* such as tagging the time the email was sent.
-#### Accuracy
-Start Time
-``` 
-Precision: 0.9136125654450262
-Recall:    0.9136125654450262
-F1:        0.9136125654450262
-```
-End Time
-``` 
-Precision: 0.8659217877094972
-Recall:    0.8469945355191257
-F1:        0.8563535911602211
-```
-#### Improvements
-I'm really happy with the F1 for both `stime` and `etime` and 
-I think they realistically can't be improved much further.
-Any improvments would be minor and only hunting for specific edge cases.
-
 ### Paragraphs
 #### Technique
 Through a series of trial and error, I incrementally improved upon the RegEx for paragraph until it was suitable enough.
@@ -99,6 +52,53 @@ F1:        0.7540000000000001
 As discussed above, An improvement to **paragraph recall** would mean 
 I could change the scope of the tokenizer to just the paragraphs, in an attempt to improve **precision**.
 
+### Start / End times
+#### Technique
+As both Start and End times have similar formats, I capture these at the same time.
+This also avoids me accidentally tagging the same time as both `stime` and `etime`.
+The easiest way to capture all times throughout the document was RegEx:
+```regexp
+(?i)(?P<hrs>\d{1,2})(?::(?P<min0>\d{2}) ?(?P<ap0>[ap]).?m|:(?P<min1>\d{2})| ?(?P<ap1>[ap]).?m)
+```
+Ignoring case, the regex looks for 1 or 2 digits, followed by either:
+- a colon, then 2 digits
+- am or pm (with or without a space, with or without dots)
+- or both *but not neither*
+
+For this particular RegEx, I made great use of Named Capture Groups as this improves readability of my code.
+
+Once all possible times are captured, they are parsed to an integer
+(e.g. `3pm -> 1500` `13:45 -> 1345`),
+the times validated (e.g. `3672` is not valid) and a dictionary of sets is generated
+where the the key is the int and the set is all strings in each email represented by the int.
+This allows me to pick one `stime`/`etime` and tag all strings that fit those times.
+
+Picking the times is pretty easy, I just select the smallest time as `stime` and largest times as `etime`,
+with integers making the comparison easy, ensuring they aren't equivalent.
+In order to improve accuracy, I change the scope that this analysis is performed over.
+1. Just the `Time:` line in the head (if it exists)
+2. Just the abstract and body
+
+If `stime` or `etime` haven't been allocated by this point then they aren't tagged. 
+This is to avoid reducing **precision** by tagging irrelevant times such as the time the email was sent.
+#### Accuracy
+Start Time
+``` 
+Precision: 0.9136125654450262
+Recall:    0.9136125654450262
+F1:        0.9136125654450262
+```
+End Time
+``` 
+Precision: 0.8659217877094972
+Recall:    0.8469945355191257
+F1:        0.8563535911602211
+```
+#### Improvements
+I'm really happy with the F1 for both `stime` and `etime` and 
+I think they realistically can't be improved much further.
+Any improvements would be minor and only hunting for specific edge cases.
+
 ### Location
 #### Technique
 The first step of tagging location, is simply to look in the header / abstract and pull out `Place:` if it exists.
@@ -126,7 +126,7 @@ but that would increase the complexity of the analysis for not much payoff, and 
 #### Technique
 Similar to location, the first step is to look for a series of key words that would indicate the speaker.
 `Speaker:`, `Who:` and `WHO:` all worked pretty good at pulling out the already known speakers.
-This accounts for not even half the the corpus.
+Unfortunately, this only accounts for not even half the the corpus.
 #### Accuracy
 ``` 
 Precision: 0.782608695652174

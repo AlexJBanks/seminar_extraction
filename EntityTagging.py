@@ -134,7 +134,6 @@ def tag_email(cur_email):
     full_email = tag_times(full_email)
 
     full_email = tag_loc(full_email)
-    # TODO speaker
 
     with open(myPath + 'tagged/' + str(cur_email), 'w') as file:
         file.write(full_email)
