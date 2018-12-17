@@ -35,24 +35,19 @@ comp_freq = Counter(comp_words)
 comp_prob = get_prob(comp_freq)
 
 delta = {}
-for word in head_prob:
-    print(word)
-    print(head_prob[word])
-    if word in comp_prob:
-        print(comp_prob[word])
+for word in head_prob:#
+    if word in comp_prob:#
         delta[word] = head_prob[word] - comp_prob[word]
     else:
-        print()
         delta[word] = head_prob[word]
 
 sorted_delta = sorted(delta, key=delta.get, reverse=True)
-print(sorted_delta)
 
 file_content = ""
 for word in sorted_delta:
     file_content = file_content + word + '\n'
 
-with open('data/ontology/normalised_word_popularity.txt', 'w') as head_file:
+with open('data/ontology/wordrank.txt', 'w') as head_file:
     head_file.write(file_content[:-1])
 
-#
+print('fin makeWordrank.py')

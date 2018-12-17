@@ -1,10 +1,14 @@
-import os
-import gensim
+from collections import Counter
+from os import listdir
+from os.path import isfile, join
 from gensim.models import KeyedVectors
+from makeWordrank import words
 
 model = KeyedVectors.load_word2vec_format('C:/Users/alexb/lib/GoogleNews-vectors-negative300.bin', binary=True)
 
-print(model['run'])
+myPath = 'data/email/training/'
+onlyFiles = [f for f in listdir(myPath + 'untagged/') if isfile(join(myPath + 'untagged/', f))]
+
 
 departments = { 'Accounting':           'Business',
                 'African':              'Culture',
@@ -16,19 +20,18 @@ departments = { 'Accounting':           'Business',
                 'Biology':              'LES',
                 'Business':             '',
                 'Law':                  'CAL',
-                'Chemical Engineering': 'EPS',
                 'Engineering':          'EPS',
                 'Chemistry':            'EPS',
-                'Civil Engineering':    'Engineering',
+                'Civil':                'Engineering',
                 'Classics':             'History',
                 'History':              'CoSS',
                 'CAL':                  '',
                 'EPS':                  '',
-                'CoSS':                 '',
+                'COSS':                 '',
                 'MDS':                  '',
                 'LES':                  '',
                 'Archaeology':          'History',
-                'Computer Science':     'EPS',
+                'Computer':             'EPS',
                 'Dentistry':            'MDS',
                 'Management':           'Business',
                 'Social':               'CoSS',
@@ -67,3 +70,43 @@ departments = { 'Accounting':           'Business',
                 'Criminology':          'Social',
                 'Sport':                'LES'}
 
+def get_max_depart(word):
+    maximum = 0
+    depart = ""
+    for department in departments:
+        cur = model.similarity(word, department)
+        if cur > maximum:
+            maximum = cur
+            depart = department
+    return depart
+
+all_predictions = {}
+for email in onlyFiles:
+    print(email)
+    full_email = open(myPath + 'untagged/' + str(email)).read()
+    if 'Topic:' in full_email:
+        likely_departs = []
+        for word in words(full_email.split('Topic:')[1].split(':')[0]):
+            if word in model:
+                likely_departs.append(get_max_depart(word))
+        if len(likely_departs) > 0:
+            pred = Counter(likely_departs).most_common()[0][0]
+            print(pred)
+            all_predictions.setdefault(pred, [])
+            all_predictions[pred].append(email)
+
+print(all_predictions)
+
+file_content = ""
+for depart in departments.keys():
+    file_content = file_content + depart + '\n'
+    print(depart)
+    all_predictions.setdefault(depart, [])
+    for email in all_predictions[depart]:
+        file_content = file_content + " " + email + '\n'
+        print(" " + email)
+    file_content = file_content + '\n'
+    print()
+
+with open('data/ontology/predictions.txt', 'w') as file:
+    file.write(file_content[:-2])
