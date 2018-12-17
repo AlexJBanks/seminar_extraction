@@ -12,7 +12,7 @@ onlyFiles = [f for f in listdir(myPath + 'untagged/') if isfile(join(myPath + 'u
 
 departments = { 'Accounting':           'Business',
                 'African':              'Culture',
-                'Culture':              'CoSS',
+                'Culture':              'COSS',
                 'Anthropology':         'Culture',
                 'Arts':                 'CAL',
                 'Astronomy':            'Physics',
@@ -24,7 +24,7 @@ departments = { 'Accounting':           'Business',
                 'Chemistry':            'EPS',
                 'Civil':                'Engineering',
                 'Classics':             'History',
-                'History':              'CoSS',
+                'History':              'COSS',
                 'CAL':                  '',
                 'EPS':                  '',
                 'COSS':                 '',
@@ -34,7 +34,7 @@ departments = { 'Accounting':           'Business',
                 'Computer':             'EPS',
                 'Dentistry':            'MDS',
                 'Management':           'Business',
-                'Social':               'CoSS',
+                'Social':               'COSS',
                 'Development':          'Social',
                 'Disability':           'Social',
                 'Drama':                'Arts',
@@ -82,7 +82,6 @@ def get_max_depart(word):
 
 all_predictions = {}
 for email in onlyFiles:
-    print(email)
     full_email = open(myPath + 'untagged/' + str(email)).read()
     if 'Topic:' in full_email:
         likely_departs = []
@@ -91,22 +90,16 @@ for email in onlyFiles:
                 likely_departs.append(get_max_depart(word))
         if len(likely_departs) > 0:
             pred = Counter(likely_departs).most_common()[0][0]
-            print(pred)
             all_predictions.setdefault(pred, [])
             all_predictions[pred].append(email)
-
-print(all_predictions)
 
 file_content = ""
 for depart in departments.keys():
     file_content = file_content + depart + '\n'
-    print(depart)
     all_predictions.setdefault(depart, [])
     for email in all_predictions[depart]:
         file_content = file_content + " " + email + '\n'
-        print(" " + email)
     file_content = file_content + '\n'
-    print()
 
 with open('data/ontology/predictions.txt', 'w') as file:
     file.write(file_content[:-2])
