@@ -1,3 +1,10 @@
+import os
+import gensim
+from gensim.models import KeyedVectors
+
+model = KeyedVectors.load_word2vec_format('C:/Users/alexb/lib/GoogleNews-vectors-negative300.bin', binary=True)
+
+print(model['run'])
 
 departments = { 'Accounting':           'Business',
                 'African':              'Culture',

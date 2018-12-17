@@ -41,7 +41,7 @@ Also, by tweaking the definition of a 'word' so that parts of email addresses et
 The easiest way to do this was to hard code in some set values I was looking for.
 Looking at the university website, I copied over a list of departments and reduced them down to single words.
 
-
+### 3. Word2Vec
 
 ## Accuracy
 
