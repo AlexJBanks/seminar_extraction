@@ -4,8 +4,8 @@ from os.path import isfile, join
 import AccuracyCalculator
 
 
-def get_loc(email, path):
-    full_email = open(path + '/' + str(email)).read()
+def get_loc(cur_email, path):
+    full_email = open(path + '/' + str(cur_email)).read()
     content = re.compile(loc_regex).findall(full_email)
     detagged = []
     for loc in content:

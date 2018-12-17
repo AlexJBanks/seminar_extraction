@@ -70,6 +70,7 @@ departments = { 'Accounting':           'Business',
                 'Criminology':          'Social',
                 'Sport':                'LES'}
 
+
 def get_max_depart(word):
     maximum = 0
     depart = ""
@@ -79,6 +80,7 @@ def get_max_depart(word):
             maximum = cur
             depart = department
     return depart
+
 
 all_predictions = {}
 for email in onlyFiles:

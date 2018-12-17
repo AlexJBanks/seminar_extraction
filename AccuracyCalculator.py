@@ -5,6 +5,7 @@ from os.path import isfile, join
 
 import EntityTagging
 
+
 def extract_tags(email):
     tagged_full    = open(myPath +    'tagged/' + str(email)).read()
     pretagged_full = open(myPath + 'pretagged/' + str(email)).read()
@@ -16,9 +17,6 @@ def extract_tags(email):
 
         classified[tag] = classified[tag] + sum(tagged_freq.values())
         tp_in_corpus[tag] = tp_in_corpus[tag] + sum(pretagged_freq.values())
-
-        #if sum(tagged_freq.values()) == 0:
-        #    print('no ' + tag)
 
         temp = 0
         for content in pretagged_freq:
@@ -96,8 +94,6 @@ myPath = 'data/email/test/'
 onlyFiles = [f for f in listdir(myPath+'untagged/') if isfile(join(myPath+'untagged/', f))]
 for email in onlyFiles:
     extract_tags(email)
-
-#extract_tags('306.txt')
 
 print(classified)
 print(tp_in_corpus)

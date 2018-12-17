@@ -3,7 +3,7 @@ from collections import Counter
 from os import listdir
 from os.path import isfile, join
 
-from nltk.corpus import reuters, brown
+from nltk.corpus import reuters
 myPath = 'data/email/training/'
 onlyFiles = [f for f in listdir(myPath+'untagged/') if isfile(join(myPath+'untagged/', f))]
 
@@ -35,8 +35,8 @@ comp_freq = Counter(comp_words)
 comp_prob = get_prob(comp_freq)
 
 delta = {}
-for word in head_prob:#
-    if word in comp_prob:#
+for word in head_prob:
+    if word in comp_prob:
         delta[word] = head_prob[word] - comp_prob[word]
     else:
         delta[word] = head_prob[word]

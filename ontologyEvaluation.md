@@ -38,12 +38,12 @@ the data produces much more valuable words.
 ``` 
 
 ### 2. Defining Departments
-The easiest way to do this was to hard code in some set values I was looking for.
-Looking at the university website, I copied over a list of departments and reduced them down to single words.
+The easiest way to do this was to hard code in some subjects I was looking for.
+Looking at the university website, I copied over a list of departments and colleges, reducing them down to single words.
 I put this all into a dictionary, where each entry pointed to either a broader department or an empty string 
 (symbolising you had reached the end of the chain)
 
-Once a department was found for the email you could recursively call that data structure until you get an empty string
+Once a subject was found for the email you could recursively call that data structure until you get an empty string
 e.g. 
 
 `Astronomy -> Physics -> EPS`
@@ -58,12 +58,23 @@ but it can now successfully report back similarities between word pairs.
 Currently, I am using word2vec to compare a word in an email's `Topic:` to each Department, 
 then remember the maximum similarity department.
 Do this for each word in `Topic:`,
-then select the most frequent maximum similarity department, and assign that as the topic.
+then select the most frequent maximum similarity department, and assign that as the subject.
 
 ## Accuracy & Further Improvements
 Thus far, ontology is not that accurate.
-To begin with, some emails don't have a `Topic:` and so can't be tagged.
+To begin with, some emails don't have a `Topic:` and so aren't being assigned a subject.
 
-Also, when looking for a department I'm looking through the entire list including the colleges, 
+Also, when looking for a subject I'm looking through the entire list of departments including the colleges, 
 and the colleges are getting way too many assignments, stealing them from real departments.
-perhaps splitting apart the recursive dictionary structure from the leaf nodes would be better.
+Perhaps converting the recursive dictionary structure to a tree data structure would be useful. 
+Then I'd only search across leaf nodes of the tree and stop greedy nodes such as `EPS` matching with everything.
+
+An overall improvement could be to take advantage of the ordered list generated in part 1.
+Weighting the more common words or more unusual words to have a bigger impact on the data could improve precision.
+It could also throw the whole system into chaos, 
+and so the weights must be carefully balanced in order to find an appropriate weighting.
+It would be unclear as to why that specific weighting would be optimal.
+
+The final improvement would be to use something completely different: e.g. wordnet or wikification 
+This could be used to try and find meanings in the most unique words in the hope of finding a clear meaning 
+and link to one of the subjects so seminars could be assigned that way.
