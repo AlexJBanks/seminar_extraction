@@ -2,8 +2,8 @@ import re
 from collections import Counter
 from os import listdir
 from os.path import isfile, join
-from nltk.corpus import brown
 
+from nltk.corpus import reuters, brown
 myPath = 'data/email/training/'
 onlyFiles = [f for f in listdir(myPath+'untagged/') if isfile(join(myPath+'untagged/', f))]
 
@@ -26,22 +26,26 @@ def rank_all():
         if 'Topic:' in full_email:
             for word in words(open(myPath + 'untagged/' + str(email)).read().split('Topic:')[1].split(':')[0]):
                 all_head.append(word)
+        else:
+            if 'Abstract:' in full_email:
+                for word in words(open(myPath + 'untagged/' + str(email)).read().split('Abstract:')[1]):
+                    all_head.append(word)
     head_freq = Counter(all_head)
     head_prob = get_prob(head_freq)
 
-    brown_words = []
+    comp_words = []
     for word in brown.words():
-        brown_words.append(word.lower())
-    brown_freq = Counter(brown_words)
-    brown_prob = get_prob(brown_freq)
+        comp_words.append(word.lower())
+    comp_freq = Counter(comp_words)
+    comp_prob = get_prob(comp_freq)
 
     delta = {}
     for word in head_prob:
         print(word)
         print(head_prob[word])
-        if word in brown_prob:
-            print(brown_prob[word])
-            delta[word] = head_prob[word] - brown_prob[word]
+        if word in comp_prob:
+            print(comp_prob[word])
+            delta[word] = head_prob[word] - comp_prob[word]
         else:
             print()
             delta[word] = head_prob[word]
