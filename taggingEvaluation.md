@@ -156,6 +156,8 @@ with ambiguities leading to lower **precision** but this would be counteracted b
 
 Once the NER is setup, it could be used to help improve `location` tagging too.
 
+Alternatively, the `names` package in `nltk` may have been useful 
+but probably suffered from the same problems as the text files.
 ## Overall Accuracy
 ```
 Precision: 0.7877229080932785

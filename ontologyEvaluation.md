@@ -26,17 +26,22 @@ of
 the
 ```
 
-This was further improved by reducing the scope, first to look at just `Topic:` segment
+This was further improved by reducing the scope, 
+initially looking at just `Topic:` segment and abstract/body but I found reducing to just `topic` more useful.
 ```regexp
 (?m)^(.+?):\s*(.*(?:\n\s+.*)*)
 ```
 
-Also, by tweaking the definition of a 'word' so that parts of email etc weren't included
+Also, by tweaking the definition of a 'word' so that parts of email addresses etc weren't included
 ```regexp
-(?i)(?<=[\s\-(])(\w*[a-z]\w*)(?=[.,')\-\/\s])
+(?i)(?<=[\s\-\/'(])(\w*[a-z]{2,}\w*)(?=[.,'):\-\/\s])
 ``` 
 
 ### 2. Defining Departments
+The easiest way to do this was to hard code in some set values I was looking for.
+Looking at the university website, I copied over a list of departments and reduced them down to single words.
+
+
 
 ## Accuracy
 
