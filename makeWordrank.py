@@ -4,8 +4,9 @@ from os import listdir
 from os.path import isfile, join
 
 from nltk.corpus import reuters
+
 myPath = 'data/email/training/'
-onlyFiles = [f for f in listdir(myPath+'untagged/') if isfile(join(myPath+'untagged/', f))]
+onlyFiles = [f for f in listdir(myPath + 'untagged/') if isfile(join(myPath + 'untagged/', f))]
 
 
 def words(text): return re.findall(r"(?i)(?<=[\s\-\/'(])(\w*[a-z]{2,}\w*)(?=[.,'):\-\/\s])", text.lower())

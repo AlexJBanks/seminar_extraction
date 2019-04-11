@@ -3,10 +3,10 @@ from os import listdir
 from os.path import isfile, join
 
 import nltk
+# nltk.download()
 
 
 def tag_times(full_email):
-
     stime = None
     etime = None
     if "Time:" in full_email:
@@ -38,7 +38,6 @@ def tag_times(full_email):
 
 
 def get_times(text):
-
     time_exp = r"(?i)(?P<hrs>\d{1,2})(?::(?P<min0>\d{2}) ?(?P<ap0>[ap]).?m|:(?P<min1>\d{2})| ?(?P<ap1>[ap]).?m)"
     time_iter = re.compile(time_exp).finditer(text)
 
@@ -124,7 +123,6 @@ def tag_element(text, element, tag):
 
 
 def tag_email(cur_email):
-
     full_email = open(myPath + 'untagged/' + str(cur_email)).read()
 
     full_email = tag_para_sent(full_email)
@@ -141,10 +139,8 @@ def tag_email(cur_email):
 
 
 myPath = 'data/email/test/'
-onlyFiles = [f for f in listdir(myPath+'untagged/') if isfile(join(myPath+'untagged/', f))]
+onlyFiles = [f for f in listdir(myPath + 'untagged/') if isfile(join(myPath + 'untagged/', f))]
 
 for email in onlyFiles:
     print(email)
     tag_email(email)
-
-tag_email('364.txt')

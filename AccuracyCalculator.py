@@ -7,7 +7,7 @@ import EntityTagging
 
 
 def extract_tags(email):
-    tagged_full    = open(myPath +    'tagged/' + str(email)).read()
+    tagged_full = open(myPath + 'tagged/' + str(email)).read()
     pretagged_full = open(myPath + 'pretagged/' + str(email)).read()
 
     for tag in tag_names:
@@ -91,7 +91,7 @@ for tag in tag_names:
     tp_classified[tag] = 0
 
 myPath = 'data/email/test/'
-onlyFiles = [f for f in listdir(myPath+'untagged/') if isfile(join(myPath+'untagged/', f))]
+onlyFiles = [f for f in listdir(myPath + 'untagged/') if isfile(join(myPath + 'untagged/', f))]
 for email in onlyFiles:
     extract_tags(email)
 
