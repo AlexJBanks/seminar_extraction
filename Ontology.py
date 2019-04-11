@@ -4,7 +4,7 @@ from os.path import isfile, join
 from gensim.models import KeyedVectors
 from makeWordrank import words
 
-model = KeyedVectors.load_word2vec_format('C:/Users/alexb/lib/GoogleNews-vectors-negative300.bin', binary=True)
+model = KeyedVectors.load_word2vec_format('data/GoogleNews-vectors-negative300.bin', binary=True)
 
 myPath = 'data/email/training/'
 onlyFiles = [f for f in listdir(myPath + 'untagged/') if isfile(join(myPath + 'untagged/', f))]
